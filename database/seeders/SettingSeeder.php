@@ -7,17 +7,21 @@ use App\Models\Setting;
 class SettingSeeder extends Seeder
 {
     public function run()
-    {
-        $settings = [
-            'business_name'   => 'SmartBiz Retail Co.',
-            'currency'        => 'USD',
-            'tax_rate'        => '15',
-            'low_stock_alert' => '10',
-            'timezone'        => 'UTC',
-            'date_format'     => 'MM/DD/YYYY',
-        ];
-        foreach ($settings as $key => $val) {
-            Setting::create(['key'=>$key,'value'=>$val]);
-        }
+{
+    $settings = [
+        'business_name'   => 'SmartBiz Retail Co.',
+        'currency'        => 'AED',
+        'tax_rate'        => '5',
+        'low_stock_alert' => '10',
+        'timezone'        => 'Asia/Dubai',
+        'date_format'     => 'd/m/Y',
+    ];
+
+    foreach ($settings as $key => $val) {
+        Setting::updateOrCreate(
+            ['key' => $key],
+            ['value' => $val]
+        );
     }
+}
 }

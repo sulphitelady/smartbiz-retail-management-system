@@ -39,7 +39,7 @@
         <div class="bg-white p-4 rounded-xl shadow">
             <p class="text-gray-500">Stock Value</p>
             <h3 class="text-xl font-bold text-green-500">
-                ${{ number_format($invStats['value'] ?? 0, 2) }}
+                AED {{ number_format($invStats['value'] ?? 0, 2) }}
             </h3>
         </div>
 
@@ -78,7 +78,7 @@
                     </td>
 
                     <td class="p-4">
-                        ${{ number_format($product->price, 2) }}
+                        {{ formatCurrency($product->price) }}
                     </td>
 
                     <td class="p-4">

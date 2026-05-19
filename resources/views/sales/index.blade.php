@@ -30,7 +30,7 @@
         <tr class="border-b">
             <td class="p-2">{{ $sale->invoice_number }}</td>
             <td class="p-2">{{ $sale->customer->name }}</td>
-            <td class="p-2">${{ $sale->total }}</td>
+            <td class="p-2">{{ formatCurrency($sale->total) }}</td>
             <td class="p-2">
                 <span class="px-2 py-1 text-sm rounded
                     {{ ($sale->status ?? 'completed') == 'cancelled' ? 'bg-red-200' : 'bg-green-200' }}">

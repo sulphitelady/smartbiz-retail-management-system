@@ -84,13 +84,22 @@ class SaleController extends Controller
                 throw new \Exception('Please add product quantity');
             }
 
-            $tax = $subtotal * 0.15;
+            $discountPercent = $request->discount ?? 0;
 
-            $sale->update([
-                'subtotal' => $subtotal,
-                'tax' => $tax,
-                'total' => $subtotal + $tax,
-            ]);
+$discountAmount = ($subtotal * $discountPercent) / 100;
+
+$afterDiscount = $subtotal - $discountAmount;
+
+$tax = $afterDiscount * 0.05; // UAE VAT 5%
+
+$finalTotal = $afterDiscount + $tax;
+
+$sale->update([
+    'subtotal' => $subtotal,
+    'discount' => $discountAmount,
+    'tax' => $tax,
+    'total' => $finalTotal,
+]);
 
             DB::commit();
 
@@ -127,9 +136,86 @@ class SaleController extends Controller
     }
 
     public function destroy(Sale $sale)
-    {
+{
+    DB::beginTransaction();
+
+    try {
+
+        foreach ($sale->items as $item) {
+
+            $product = Product::find($item->product_id);
+
+            if ($product) {
+
+                $product->increment('quantity', $item->quantity);
+
+                InventoryLog::create([
+                    'product_id' => $product->id,
+                    'action' => 'returned',
+                    'quantity_change' => $item->quantity,
+                    'sale_id' => $sale->id,
+                    'note' => 'Sale deleted / stock restored'
+                ]);
+            }
+        }
+
+        $sale->items()->delete();
+
         $sale->delete();
 
-        return redirect()->route('sales.index');
+        DB::commit();
+
+        return redirect()->route('sales.index')
+            ->with('success', 'Sale deleted and stock restored');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with('error', $e->getMessage());
     }
+}
+public function cancel(Sale $sale)
+{
+    DB::beginTransaction();
+
+    try {
+
+        if ($sale->status === 'cancelled') {
+            return back()->with('error', 'Order already cancelled');
+        }
+
+        foreach ($sale->items as $item) {
+
+            $product = Product::find($item->product_id);
+
+            if ($product) {
+
+                $product->increment('quantity', $item->quantity);
+
+                InventoryLog::create([
+                    'product_id' => $product->id,
+                    'action' => 'returned',
+                    'quantity_change' => $item->quantity,
+                    'sale_id' => $sale->id,
+                    'note' => 'Cancelled order stock restored'
+                ]);
+            }
+        }
+
+        $sale->update([
+            'status' => 'cancelled'
+        ]);
+
+        DB::commit();
+
+        return back()->with('success', 'Order cancelled successfully');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with('error', $e->getMessage());
+    }
+}
 }

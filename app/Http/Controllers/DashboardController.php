@@ -35,8 +35,15 @@ class DashboardController extends Controller
         $stats = [
             'total_products'  => Product::count(),
             'total_customers' => Customer::count(),
-            'total_sales'     => Sale::count(),
-            'monthly_revenue' => Sale::whereMonth('created_at', now()->month)->sum('total'),
+
+            // FIXED: only completed sales
+            'total_sales' => Sale::where('status', 'completed')->count(),
+
+            // FIXED: safe monthly revenue
+            'monthly_revenue' => Sale::where('status', 'completed')
+                ->whereYear('created_at', now()->year)
+                ->whereMonth('created_at', now()->month)
+                ->sum('total'),
         ];
 
         return view('dashboard', [
@@ -49,23 +56,24 @@ class DashboardController extends Controller
 
     /*
     |-----------------------------
-    | MONTHLY REVENUE (FIXED FOR CHART)
+    | MONTHLY REVENUE (CHART SAFE)
+    | ALWAYS RETURNS 12 MONTHS
     |-----------------------------
     */
     private function getMonthlyRevenue()
     {
-        $data = Sale::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
+        $raw = Sale::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
+            ->where('status', 'completed')
             ->whereYear('created_at', now()->year)
             ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+            ->pluck('revenue', 'month');
 
         $labels = [];
         $values = [];
 
-        foreach ($data as $row) {
-            $labels[] = Carbon::create()->month($row->month)->format('F');
-            $values[] = $row->revenue;
+        for ($m = 1; $m <= 12; $m++) {
+            $labels[] = Carbon::create()->month($m)->format('F');
+            $values[] = (float) ($raw[$m] ?? 0);
         }
 
         return [

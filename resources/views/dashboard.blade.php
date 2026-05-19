@@ -81,7 +81,7 @@
             <p class="text-gray-500 text-sm">Revenue</p>
 
             <h2 class="text-2xl font-bold text-green-600">
-                AED {{ number_format($stats['monthly_revenue'] ?? 0, 2) }}
+                {{ formatCurrency($stats['monthly_revenue']) }}
             </h2>
         </div>
 
@@ -138,18 +138,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const categoryCanvas = document.getElementById('categoryChart');
 
     if (!salesCanvas || !categoryCanvas) return;
-
+    
     // ================= BAR CHART =================
     new Chart(salesCanvas, {
 
         type: 'bar',
 
         data: {
-            labels: Object.keys(monthly),
+            labels: monthly.labels,
 
             datasets: [{
                 label: 'Revenue (AED)',
-                data: Object.values(monthly),
+                data: monthly.values,
 
                 backgroundColor: '#4F46E5',
                 borderRadius: 10,
