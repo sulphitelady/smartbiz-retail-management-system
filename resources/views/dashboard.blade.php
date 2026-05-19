@@ -2,20 +2,21 @@
 
 @section('content')
 
-<div class="space-y-8">
+<div class="space-y-4 h-[calc(100vh-80px)] overflow-hidden">
 
     {{-- ================= HEADER ================= --}}
-    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white p-8 rounded-2xl shadow-lg">
+    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white p-5 rounded-2xl shadow-lg">
 
         <div class="flex justify-between items-center">
 
             <div>
-                <h1 class="text-3xl font-bold">📊 SmartBiz Dashboard</h1>
-                <p class="mt-2 text-sm opacity-90">
-                    Welcome {{ auth()->user()->name }} ({{ auth()->user()->getRoleNames()->first() }})
+                <h1 class="text-2xl font-bold">📊 SmartBiz Dashboard</h1>
+
+                <p class="mt-1 text-sm opacity-90">
+                    Welcome {{ auth()->user()->name }}
+                    ({{ auth()->user()->getRoleNames()->first() }})
                 </p>
             </div>
-
 
         </div>
 
@@ -24,26 +25,28 @@
     {{-- ================= ADMIN STATS ================= --}}
     @if(auth()->user()->hasRole('admin') && isset($users))
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border-l-4 border-blue-500">
-            <p class="text-gray-500 text-sm">Total Users</p>
-            <h2 class="text-3xl font-bold">{{ $users['total'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow border-l-4 border-blue-500">
+            <p class="text-gray-500 text-xs">Total Users</p>
+            <h2 class="text-2xl font-bold">{{ $users['total'] ?? 0 }}</h2>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border-l-4 border-green-500">
-            <p class="text-gray-500 text-sm">Staff</p>
-            <h2 class="text-3xl font-bold">{{ $users['staff'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow border-l-4 border-green-500">
+            <p class="text-gray-500 text-xs">Staff</p>
+            <h2 class="text-2xl font-bold">{{ $users['staff'] ?? 0 }}</h2>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border-l-4 border-purple-500">
-            <p class="text-gray-500 text-sm">Managers</p>
-            <h2 class="text-3xl font-bold">{{ $users['manager'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow border-l-4 border-purple-500">
+            <p class="text-gray-500 text-xs">Managers</p>
+            <h2 class="text-2xl font-bold">{{ $users['manager'] ?? 0 }}</h2>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border-l-4 border-red-500">
-            <p class="text-gray-500 text-sm">Pending</p>
-            <h2 class="text-3xl font-bold text-red-500">{{ $users['pending'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow border-l-4 border-red-500">
+            <p class="text-gray-500 text-xs">Pending</p>
+            <h2 class="text-2xl font-bold text-red-500">
+                {{ $users['pending'] ?? 0 }}
+            </h2>
         </div>
 
     </div>
@@ -51,25 +54,32 @@
     @endif
 
     {{-- ================= BUSINESS STATS ================= --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:scale-105 transition">
-            <p class="text-gray-500">Products</p>
-            <h2 class="text-2xl font-bold">{{ $stats['total_products'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow">
+            <p class="text-gray-500 text-sm">Products</p>
+            <h2 class="text-2xl font-bold">
+                {{ $stats['total_products'] ?? 0 }}
+            </h2>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:scale-105 transition">
-            <p class="text-gray-500">Customers</p>
-            <h2 class="text-2xl font-bold">{{ $stats['total_customers'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow">
+            <p class="text-gray-500 text-sm">Customers</p>
+            <h2 class="text-2xl font-bold">
+                {{ $stats['total_customers'] ?? 0 }}
+            </h2>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:scale-105 transition">
-            <p class="text-gray-500">Sales</p>
-            <h2 class="text-2xl font-bold">{{ $stats['total_sales'] ?? 0 }}</h2>
+        <div class="bg-white p-4 rounded-xl shadow">
+            <p class="text-gray-500 text-sm">Sales</p>
+            <h2 class="text-2xl font-bold">
+                {{ $stats['total_sales'] ?? 0 }}
+            </h2>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:scale-105 transition">
-            <p class="text-gray-500">Revenue</p>
+        <div class="bg-white p-4 rounded-xl shadow">
+            <p class="text-gray-500 text-sm">Revenue</p>
+
             <h2 class="text-2xl font-bold text-green-600">
                 AED {{ number_format($stats['monthly_revenue'] ?? 0, 2) }}
             </h2>
@@ -77,17 +87,33 @@
 
     </div>
 
-    {{-- ================= CHART SECTION ================= --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {{-- ================= CHARTS ================= --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
 
-        <div class="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 class="font-semibold mb-4">📈 Monthly Revenue</h3>
-            <canvas id="salesChart"></canvas>
+        {{-- Revenue Chart --}}
+        <div class="bg-white p-4 rounded-2xl shadow h-[320px]">
+
+            <h3 class="font-semibold mb-2 text-sm">
+                📈 Monthly Revenue
+            </h3>
+
+            <div class="h-[250px]">
+                <canvas id="salesChart"></canvas>
+            </div>
+
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 class="font-semibold mb-4">📊 Category Distribution</h3>
-            <canvas id="categoryChart"></canvas>
+        {{-- Category Chart --}}
+        <div class="bg-white p-4 rounded-2xl shadow h-[320px]">
+
+            <h3 class="font-semibold mb-2 text-sm">
+                📊 Category Distribution
+            </h3>
+
+            <div class="h-[250px]">
+                <canvas id="categoryChart"></canvas>
+            </div>
+
         </div>
 
     </div>
@@ -96,8 +122,10 @@
 
 @endsection
 
+
 {{-- ================= CHART JS ================= --}}
 @push('scripts')
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -111,32 +139,73 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!salesCanvas || !categoryCanvas) return;
 
+    // ================= BAR CHART =================
     new Chart(salesCanvas, {
-        type: 'line',
+
+        type: 'bar',
+
         data: {
             labels: Object.keys(monthly),
+
             datasets: [{
-                label: 'Revenue',
+                label: 'Revenue (AED)',
                 data: Object.values(monthly),
-                borderColor: '#4F46E5',
-                backgroundColor: 'rgba(79,70,229,0.1)',
-                fill: true,
-                tension: 0.4
+
+                backgroundColor: '#4F46E5',
+                borderRadius: 10,
+                barThickness: 40
             }]
+        },
+
+        options: {
+
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
+
     });
 
+    // ================= DOUGHNUT CHART =================
     new Chart(categoryCanvas, {
+
         type: 'doughnut',
+
         data: {
             labels: Object.keys(category),
+
             datasets: [{
                 data: Object.values(category),
-                backgroundColor: ['#4F46E5','#10B981','#F59E0B','#EF4444','#8B5CF6']
+
+                backgroundColor: [
+                    '#4F46E5',
+                    '#10B981',
+                    '#F59E0B',
+                    '#EF4444',
+                    '#8B5CF6'
+                ]
             }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
         }
+
     });
 
 });
 </script>
+
 @endpush
